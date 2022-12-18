@@ -1,0 +1,33 @@
+.container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.circle {
+  display: inline-block;
+  height: 100px;
+  width: 100px;
+  color: gray;
+  border: 2px solid black;
+  border-radius: 50%;
+}
+
+.row {
+  text-align: center;
+}
+
+.BLUE {
+  background-color: #45b6fe;
+}
+
+.RED {
+  background-color: #ff7779;
+}
+
+#output,
+#current-turn {
+  text-align: center;
+  font-size: 100px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
