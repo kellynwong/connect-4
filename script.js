@@ -69,68 +69,75 @@ const checkID = (e) => {
 
 const diagRight = [];
 
+const checkPosition2 = (positionId, color) => {
+  if (positionId >= 0 && positionId <= 42) {
+    if (color === document.getElementById(positionId).classList[1]) {
+      return true;
+    }
+  }
+  return false;
+};
+
 // CHECK if won - first 4 to reach horizontally, vertically or diagonally
 const checkWin = (e) => {
-  let clicked = document.getElementById(Number(e.target.id)).classList[1];
+  const whatWasClicked = Number(e.target.id);
+  let clickedColor = document.getElementById(Number(e.target.id)).classList[1];
   if (
-    (clicked ===
-      document.getElementById(Number(e.target.id) + 6).classList[1] &&
-      clicked ===
-        document.getElementById(Number(e.target.id) + 12).classList[1] &&
-      clicked ===
-        document.getElementById(Number(e.target.id) + 18).classList[1]) ||
-    (clicked ===
+    (checkPosition2(whatWasClicked + 6, clickedColor) &&
+      checkPosition2(whatWasClicked + 12, clickedColor) &&
+      checkPosition2(whatWasClicked + 18, clickedColor)) ||
+    (clickedColor ===
       document.getElementById(Number(e.target.id) - 6).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 12).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 18).classList[1])
   ) {
-    document.querySelector("#output").innerText = clicked + " WINS!";
+    document.querySelector("#output").innerText = clickedColor + " WINS!";
   } else if (
-    (clicked ===
+    (clickedColor ===
       document.getElementById(Number(e.target.id) + 8).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) + 16).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) + 24).classList[1]) ||
-    (clicked ===
+    (clickedColor ===
       document.getElementById(Number(e.target.id) - 8).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 16).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 24).classList[1])
   ) {
-    document.querySelector("#output").innerText = clicked + " WINS!";
+    document.querySelector("#output").innerText = clickedColor + " WINS!";
   } else if (
-    (clicked ===
+    (clickedColor ===
       document.getElementById(Number(e.target.id) + 7).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) + 14).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) + 21).classList[1]) ||
-    (clicked ===
+    (clickedColor ===
       document.getElementById(Number(e.target.id) - 7).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 14).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 21).classList[1])
   ) {
-    document.querySelector("#output").innerText = clicked + " WINS!";
+    document.querySelector("#output").innerText = clickedColor + " WINS!";
   } else if (
-    (clicked ===
-      document.getElementById(Number(e.target.id) + 1).classList[1] &&
-      clicked ===
+    (checkPosition2(whatWasClicked + 1, clickedColor) &&
+      clickedColor ===
         document.getElementById(Number(e.target.id) + 2).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) + 3).classList[1]) ||
-    (clicked ===
+    (clickedColor ===
       document.getElementById(Number(e.target.id) - 1).classList[1] &&
-      clicked ===
+      clickedColor ===
         document.getElementById(Number(e.target.id) - 2).classList[1] &&
-      clicked === document.getElementById(Number(e.target.id) - 3).classList[1])
+      clickedColor ===
+        document.getElementById(Number(e.target.id) - 3).classList[1])
   ) {
-    document.querySelector("#output").innerText = clicked + " WINS!";
+    document.querySelector("#output").innerText = clickedColor + " WINS!";
   }
 };
 
@@ -213,7 +220,61 @@ const generateBoard = (num) => {
     }
   }
 };
-generateBoard(42);
+// generateBoard(42);
+
+// const board = [
+//   ["", "", "", "", "", "", ""],
+//   ["", "", "", "", "", "", ""],
+//   ["", "", "", "", "", "", ""],
+//   ["", "", "", "", "", "", ""],
+//   ["", "", "", "", "", "", ""],
+//   ["", "", "", "", "", "", ""],
+// ];
+
+let board = [];
+for (let x = 1; x <= 6; x++) {
+  let innerboard = [];
+  board.push(innerboard);
+  for (let y = 1; y <= 7; y++) {
+    innerboard.push("");
+  }
+}
+console.log(board);
+
+const displayBoard = (board) => {
+  for (let row = 0; row < board.length; row++) {
+    const newRow = document.createElement("tr");
+    newRow.setAttribute("class", "row");
+    document.querySelector("#board").append(newRow);
+    for (let col = 0; col < board[row].length; col++) {
+      const circle = document.createElement("td");
+      circle.innerText = row + ", " + col;
+      circle.setAttribute("xPos", col);
+      circle.setAttribute("yPos", row);
+      circle.setAttribute("class", "circle");
+      newRow.append(circle);
+      circle.addEventListener("click", colorCircle);
+    }
+  }
+};
+displayBoard(board);
+
+const checkPositionMatchesPlayer = (xPos, yPos, player) => {
+  if (
+    yPos >= 0 &&
+    yPos < board.length &&
+    xPos >= 0 &&
+    xPos < board[yPos].length
+  ) {
+    if (player === board[yPos][xPos]) {
+      // checks if player has a token in that position
+      return true;
+    }
+  }
+  return false; // if don't put this, will return null, so must put
+};
+
+const checkWin = (color) => {};
 
 // Variation: PopOut starts the same as traditional gameplay, with an empty board and players alternating turns placing their own colored discs into the board. During each turn, a player can either add another disc from the top, or if one has any discs of their own color on the bottom row, remove (or "pop out") a disc of one's own color from the bottom. Popping a disc out from the bottom drops every disc above it down one space, changing their relationship with the rest of the board and changing the possibilities for a connection. The first player to connect four of their discs horizontally, vertically, or diagonally wins the game.
 
