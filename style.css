@@ -1,33 +1,92 @@
+body {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  background: url("sky.jpeg");
+  background-size: cover;
+}
+
+header {
+  text-align: center;
+}
+
+img {
+  height: 400px;
+}
+
 .container {
+  display: flex;
+}
+
+.board,
+.others {
+  background-image: linear-gradient(
+    to right,
+    rgba(29, 172, 231, 0.7),
+    rgba(15, 158, 218, 0.9)
+  );
+  margin-top: 10px;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+/* ======================= LEFT SIDE ======================= */
+.board {
   margin-left: auto;
-  margin-right: auto;
 }
 
 .circle {
   display: inline-block;
-  height: 100px;
-  width: 100px;
+  height: 80px;
+  width: 80px;
   color: gray;
-  border: 2px solid black;
   border-radius: 50%;
+  background-color: white;
+  margin: 5px;
 }
 
 .row {
   text-align: center;
 }
 
-.BLUE {
-  background-color: #45b6fe;
+.GREY {
+  background-color: grey;
+}
+
+.YELLOW {
+  background-color: rgb(255, 246, 0);
 }
 
 .RED {
-  background-color: #ff7779;
+  background-color: rgb(255, 32, 32);
+}
+
+/* ======================= RIGHT SIDE ======================= */
+.others {
+  margin-right: auto;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.others div {
+  padding: 30px;
+  min-width: 150px;
 }
 
 #output,
-#current-turn {
-  text-align: center;
-  font-size: 100px;
-  padding-top: 50px;
-  padding-bottom: 50px;
+#current-turn,
+#rematch {
+  font-size: 25px;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+}
+
+.button {
+  transition-duration: 0.4s;
+}
+.button:hover {
+  background-color: green;
 }
