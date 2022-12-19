@@ -80,19 +80,21 @@ const displayBoard = (board) => {
 };
 displayBoard(board);
 
-const checkPositionMatchesPlayer = (yPos, xPos, player) => {
+const getTokenInPosition = (yPos, xPos) => {
   if (
     yPos >= 0 &&
     yPos < board.length &&
     xPos >= 0 &&
     xPos < board[yPos].length
   ) {
-    if (player === board[yPos][xPos]) {
-      // checks if player has a token in that position
-      return true;
-    }
+    return board[yPos][xPos];
   }
-  return false; // if don't put this, will return null, so must put
+  return "";
+};
+
+const checkPositionMatchesPlayer = (yPos, xPos, player) => {
+  // checks if player has a token in that position
+  return getTokenInPosition(yPos, xPos) === player;
 };
 
 const checkWin = (player) => {
@@ -101,7 +103,7 @@ const checkWin = (player) => {
     for (let col = 0; col < board[row].length; col++) {
       // check 4 to the right same color
       if (
-        checkPositionMatchesPlayer(row, col, player) &&
+        getTokenInPosition(row, col) == player &&
         checkPositionMatchesPlayer(row, col + 1, player) &&
         checkPositionMatchesPlayer(row, col + 2, player) &&
         checkPositionMatchesPlayer(row, col + 3, player)
