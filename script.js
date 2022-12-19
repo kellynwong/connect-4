@@ -13,13 +13,17 @@ let player = "BLUE";
 //   ["", "", "", "", "", "", ""],
 //   ["", "", "", "", "", "", ""],
 // ];
-for (let x = 1; x <= 6; x++) {
-  let innerboard = [];
-  board.push(innerboard);
-  for (let y = 1; y <= 7; y++) {
-    innerboard.push("");
+function generateBoard() {
+  board = [];
+  for (let x = 1; x <= 6; x++) {
+    let innerboard = [];
+    board.push(innerboard);
+    for (let y = 1; y <= 7; y++) {
+      innerboard.push("");
+    }
   }
 }
+generateBoard();
 
 // Display board using values stored in array.
 // =========================================================================================
@@ -37,7 +41,7 @@ function displayBoard(board) {
       circle.setAttribute("yPos", row);
       circle.setAttribute("xPos", col);
       circle.setAttribute("class", "circle");
-      // add class to change color (refer to line 49 above)
+      // add class to change color
       if (board[row][col] !== "") {
         circle.classList.add(board[row][col]);
       }
@@ -62,8 +66,10 @@ function handleClick(e) {
     checkWin(player);
     if (player === "BLUE") {
       player = "RED";
+      document.querySelector("#current-turn").setAttribute("class", player);
     } else {
       player = "BLUE";
+      document.querySelector("#current-turn").setAttribute("class", player);
     }
     displayBoard(board);
   } else {
@@ -105,6 +111,7 @@ function checkWin(player) {
         count += 1;
       }
       if (count > 41) {
+        document.querySelector("button").addEventListener("click", rematch);
         return alert(`It's a tie!`);
       }
       // check 4 to the right same color
@@ -114,6 +121,7 @@ function checkWin(player) {
         checkPositionMatchesPlayer(row, col + 2, player) && // is this also blue?
         checkPositionMatchesPlayer(row, col + 3, player) // is this also blue?
       ) {
+        document.querySelector("button").addEventListener("click", rematch);
         return alert(`${player} wins!`);
       }
 
@@ -124,6 +132,7 @@ function checkWin(player) {
         checkPositionMatchesPlayer(row + 2, col, player) &&
         checkPositionMatchesPlayer(row + 3, col, player)
       ) {
+        document.querySelector("button").addEventListener("click", rematch);
         return alert(`${player} wins!`);
       }
       // check 4 diagnonally left up to the same color
@@ -133,6 +142,7 @@ function checkWin(player) {
         checkPositionMatchesPlayer(row - 2, col - 2, player) &&
         checkPositionMatchesPlayer(row - 3, col - 3, player)
       ) {
+        document.querySelector("button").addEventListener("click", rematch);
         return alert(`${player} wins!`);
       }
       // check 4 diagnonally right up to the same color
@@ -142,6 +152,7 @@ function checkWin(player) {
         checkPositionMatchesPlayer(row - 2, col + 2, player) &&
         checkPositionMatchesPlayer(row - 3, col + 3, player)
       ) {
+        document.querySelector("button").addEventListener("click", rematch);
         return alert(`${player} wins!`);
       }
     }
@@ -168,10 +179,18 @@ function getTokenInPosition(yPos, xPos) {
   return "";
 }
 
-// To Do ==================
+// Generate empty board when user clicks rematch
+// =========================================================================================
+function rematch(e) {
+  generateBoard();
+  displayBoard(board);
+}
+
+// To Do
+// =========================================================================================
 // tie game - done
 // rearrange functions for readability (order of sequence), so to do that need to change arrow function to declarative function (has hoisting) - done
-// rematch button
+// rematch button - done
 // display last circle before showing win alert
 // intro page to press PLAY
 // animation drop from above, maybe spaceship, beam a ball down

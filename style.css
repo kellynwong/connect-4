@@ -1,10 +1,24 @@
+body {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
 .container {
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+}
+
+.board,
+.others {
   background-color: #89cff0;
   margin-top: 50px;
-  padding: 5px;
+  padding: 20px;
   border-radius: 20px;
+  text-align: center;
+}
+
+/* ======================= LEFT SIDE ======================= */
+.board {
+  margin-left: auto;
 }
 
 .circle {
@@ -28,10 +42,31 @@
   background-color: #ff7779;
 }
 
+/* ======================= RIGHT SIDE ======================= */
+.others {
+  margin-right: auto;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.others div {
+  padding: 30px;
+}
+
 #output,
-#current-turn {
-  text-align: center;
-  font-size: 35px;
-  padding-top: 50px;
-  padding-bottom: 50px;
+#current-turn,
+#rematch {
+  font-size: 25px;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+}
+
+.button {
+  transition-duration: 0.4s;
+}
+.button:hover {
+  background-color: green;
 }
