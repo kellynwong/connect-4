@@ -103,12 +103,12 @@ const checkWin = (player) => {
     for (let col = 0; col < board[row].length; col++) {
       // check 4 to the right same color
       if (
-        getTokenInPosition(row, col) == player &&
+        checkPositionMatchesPlayer(row, col, player) &&
         checkPositionMatchesPlayer(row, col + 1, player) &&
         checkPositionMatchesPlayer(row, col + 2, player) &&
         checkPositionMatchesPlayer(row, col + 3, player)
       ) {
-        return alert(`{$player} wins!`);
+        return alert(`${player} wins!`);
       }
 
       // check 4 below to the same color
@@ -118,7 +118,7 @@ const checkWin = (player) => {
         checkPositionMatchesPlayer(row + 2, col, player) &&
         checkPositionMatchesPlayer(row + 3, col, player)
       ) {
-        return alert(`{$player} wins!`);
+        return alert(`${player} wins!`);
       }
       // check 4 diagnonally left up to the same color
       if (
@@ -127,7 +127,7 @@ const checkWin = (player) => {
         checkPositionMatchesPlayer(row - 2, col - 2, player) &&
         checkPositionMatchesPlayer(row - 3, col - 3, player)
       ) {
-        return alert(`{$player} wins!`);
+        return alert(`${player} wins!`);
       }
       // check 4 diagnonally right up to the same color
       if (
@@ -136,7 +136,7 @@ const checkWin = (player) => {
         checkPositionMatchesPlayer(row - 2, col + 2, player) &&
         checkPositionMatchesPlayer(row - 3, col + 3, player)
       ) {
-        return alert(`{$player} wins!`);
+        return alert(`${player} wins!`);
       }
     }
   }
