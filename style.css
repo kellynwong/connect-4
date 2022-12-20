@@ -32,6 +32,37 @@ img {
   text-align: center;
 }
 
+/* Popup container */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.popup .popuptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 20px;
+  padding: 20px;
+  position: absolute;
+  bottom: -10%;
+  left: 155%;
+  margin-left: -80px;
+  font-size: 15px;
+  font-family: "Codystar", cursive;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
 /* ======================= LEFT SIDE ======================= */
 .board {
   margin-left: auto;
