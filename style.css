@@ -1,6 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Codystar&family=Rubik+Gemstones&display=swap");
+
 body {
-  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-    "Lucida Sans", Arial, sans-serif;
+  font-family: "Codystar", cursive;
+  font-family: "Rubik Gemstones", cursive;
   background: url("sky.jpeg");
   background-size: cover;
 }
@@ -72,21 +74,49 @@ img {
 
 .others div {
   padding: 30px;
-  min-width: 150px;
+  min-width: 200px;
+  margin: 0px auto 0px auto;
 }
 
-#output,
 #current-turn,
-#rematch {
-  font-size: 25px;
-  padding: 10px;
+#rematch,
+#instructions {
+  padding: 20px;
   border-radius: 20px;
   border: none;
+  font-family: "Codystar", cursive;
+  font-family: "Rubik Gemstones", cursive;
+  font-size: 25px;
 }
 
-.button {
-  transition-duration: 0.4s;
+#current-turn {
+  font-size: 35px;
+  padding: 30px;
 }
-.button:hover {
+
+#rematch {
+  transition-duration: 0.4s;
+  padding: 30px;
+  margin-bottom: -30px;
+}
+
+#rematch:hover {
+  background-color: green;
+}
+
+#yellow-wins {
+  margin-bottom: -35px;
+}
+.red-wins {
+  margin-top: -50px;
+}
+
+#yellow-wins,
+#red-wins {
+  font-size: 30px;
+  margin-top: -50px;
+}
+
+#instructions {
   background-color: green;
 }

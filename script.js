@@ -5,6 +5,8 @@ let numRows = 6;
 let numCols = 7;
 let currentPlayer = "YELLOW";
 let results = false;
+let yellowWins = 0;
+let redWins = 0;
 
 // Create array of arrays, storing "" as value.
 // =========================================================================================
@@ -34,8 +36,19 @@ function displayBoard(board) {
   // reset board each time function is called, so as to display latest state of array
   document.querySelector("#board").innerHTML = "";
 
-  statusElement.innerText = `${currentPlayer}'S TURN`; // player is set as global variable, hence can access here
+  // player is set as global variable, hence can access here
+  statusElement.innerText = `${currentPlayer}'S 
+  TURN`;
   statusElement.setAttribute("class", currentPlayer);
+
+  // display scores on board
+  if (results === "YELLOW") {
+    yellowWins += 1;
+  } else if (results === "RED") {
+    redWins += 1;
+  }
+  document.querySelector("#yellow-wins").innerText = yellowWins;
+  document.querySelector("#red-wins").innerText = redWins;
 
   for (let row = 0; row < board.length; row++) {
     // Make a new row
@@ -59,50 +72,49 @@ function displayBoard(board) {
       // add this circle to the row
       newRow.append(circle);
       circle.addEventListener("click", handleClick);
+
+      // display final results of game
+      if (results === "TIE") {
+        statusElement.innerText = `It's a TIE!`;
+        statusElement.setAttribute("class", "GREY");
+      } else if (results === "YELLOW" || results === "RED") {
+        statusElement.innerText = `${results} 
+        WINS!`;
+        statusElement.setAttribute("class", results); // change color
+      }
     }
   }
 
-  if (results === "TIE") {
-    statusElement.innerText = `It's a TIE!`;
-    statusElement.setAttribute("class", "GREY");
-    return;
-  } else if (results === "YELLOW" || results === "RED") {
-    statusElement.innerText = `${results} player WINS!`;
-    statusElement.setAttribute("class", results);
-    return;
-  }
-}
+  // Handle click by user.
+  // =========================================================================================
+  function handleClick(e) {
+    if (results) {
+      // if there is a result for the current game, then it's completed so don't let the user click
+      return;
+    }
+    let yPos = Number(e.target.getAttribute("yPos"));
+    let xPos = Number(e.target.getAttribute("xPos"));
+    if (
+      checkIfNotOccupied(yPos, xPos) === true &&
+      checkIfSpaceBelowIsOccupied(yPos, xPos) === true
+    ) {
+      board[yPos][xPos] = currentPlayer; // assign the space on the board to the player
 
-// Handle click by user.
-// =========================================================================================
-function handleClick(e) {
-  if (results) {
-    // if there is a result for the current game, then it's completed so don't let the user click
-    return;
-  }
-  let yPos = Number(e.target.getAttribute("yPos"));
-  let xPos = Number(e.target.getAttribute("xPos"));
-  if (
-    checkIfNotOccupied(yPos, xPos) === true &&
-    checkIfSpaceBelowIsOccupied(yPos, xPos) === true
-  ) {
-    board[yPos][xPos] = currentPlayer; // assign the space on the board to the player
+      results = checkWin(currentPlayer); // check the winner and store in the results
 
-    results = checkWin(currentPlayer); // check the winner and store in the results
+      // move the turn to the next player
+      if (currentPlayer === "YELLOW") {
+        currentPlayer = "RED";
+      } else {
+        currentPlayer = "YELLOW";
+      }
 
-    // move the turn to the next player
-    if (currentPlayer === "YELLOW") {
-      currentPlayer = "RED";
+      displayBoard(board);
     } else {
-      currentPlayer = "YELLOW";
+      // return alert("Please select another circle");
     }
-
-    displayBoard(board);
-  } else {
-    // return alert("Please select another circle");
   }
 }
-
 // Check if space is occupied, if occupied, cannot place move.
 // =========================================================================================
 function checkIfNotOccupied(yPos, xPos) {
@@ -139,10 +151,10 @@ function checkWin(player) {
       }
       // check 4 to the right same color
       if (
-        checkSpaceHasPlayerColor(row, col, player) && // is this"YELLOW?
-        checkSpaceHasPlayerColor(row, col + 1, player) && // is this also"YELLOW?
-        checkSpaceHasPlayerColor(row, col + 2, player) && // is this also"YELLOW?
-        checkSpaceHasPlayerColor(row, col + 3, player) // is this also"YELLOW?
+        checkSpaceHasPlayerColor(row, col, player) && // is this YELLOW?
+        checkSpaceHasPlayerColor(row, col + 1, player) && // is this also YELLOW?
+        checkSpaceHasPlayerColor(row, col + 2, player) && // is this also YELLOW?
+        checkSpaceHasPlayerColor(row, col + 3, player) // is this also YELLOW?
       ) {
         return player;
       }
@@ -210,9 +222,39 @@ function startMatch(e) {
 document.querySelector("button").addEventListener("click", startMatch);
 startMatch();
 
-// To Do
+// INTRO PAGE
 // =========================================================================================
+// User enters name
+// Stores user's name for further use in game (use local storage) OR
+// don't use a seperate html page, use same page and use a big div to hide the board first
+// then show the FIRST div with the hello and start (3)
+// User presses start (2)
+// User can choose between Classic mode or Spaceship mode
+// If Spaceship mode, change css to reflect space design (4)
+// User can choose bigger board
+
+// GAME PAGE
+// =========================================================================================
+// Watch flappy bird
+// When user clicks, ball drops (animation) (5)
+// Ball bounces (animation)
+// Ball lands on last unoccupied space of column (use function(yPos, xPos))
+// Create moving spaceship on top (5)
+// Highlight winning 4 on board with animation (3)
+// Keep and show total wins by yellow and red (3)
+// Instructions - put a button and when click, pop out the instructions in another div (3)
+// Readme on github (1)
+
+// LAST DAY - IF HAVE TIME
+// =========================================================================================
+// More graphics to make it nice somehow such as:
+// Moving clouds moving stars etc
+// Waving flag
+// Insert border for circles and/or animate when click
+// Local storage (2)
+
 // DONE
+// =========================================================================================
 // tie game
 // rearrange functions for readability (order of sequence), so to do that need to change arrow function to declarative function (has hoisting)
 // rematch button
@@ -220,32 +262,8 @@ startMatch();
 // display last circle before showing win alert
 // press wrong circle alert ugly - fix for now is to comment out alert, considered done
 
-// INTRO PAGE
+// FOR TESTING
 // =========================================================================================
-// Enter name, store names on first page (use local storage) OR don't put seperate page, use same page and use a big div to hide the board first - then show the FIRST div with the hello and start (3)
-// Press start (2)
-// Classic mode or Spaceship mode (if spaceship, change css to make it spacelike) (4)
-// Choice of bigger board
-// How to play - put a button and when click, pop out the instructions in another div (3)
-
-// GAME PAGE
-// =========================================================================================
-// when user clicks, ball drops (animation) (5) - tuesday morning flappy bird, afternoon do
-// ball bounces (animation) - tuesday morning flappy bird, afternoon do
-// ball lands on last unoccupied space of column - use function(yPos, xPos) - tuesday afternoon
-// moving spaceship on top (5) - tuesday evening
-// highlight winning 4 on board with animation (3)
-// keep and show score of total yellow and total red (3)
-// readme on github (1)
-// local storage (2)
-
-// LAST DAY - NICE TO HAVE
-// =========================================================================================
-// more graphics to make it nice somehow
-// moving clouds moving stars etc
-// waving flag
-// insert border for circles and/or animate when click
-
 /*
 console.log("Testing for tie");
 board = JSON.parse(
