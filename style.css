@@ -32,14 +32,12 @@ img {
   text-align: center;
 }
 
-/* Popup container */
 .popup {
   position: relative;
   display: inline-block;
   cursor: pointer;
 }
 
-/* The actual popup (appears on top) */
 .popup .popuptext {
   visibility: hidden;
   width: 200px;
@@ -56,10 +54,8 @@ img {
   font-family: "Codystar", cursive;
 }
 
-/* Toggle this class when clicking on the popup container (hide and show the popup) */
 .popup .show {
   visibility: visible;
-  -webkit-animation: fadeIn 1s;
   animation: fadeIn 1s;
 }
 

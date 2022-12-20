@@ -222,7 +222,8 @@ function startMatch(e) {
 document.querySelector("button").addEventListener("click", startMatch);
 startMatch();
 
-function myFunction() {
+//
+function getInstructions() {
   var popup = document.getElementById("myPopup");
   popup.classList.toggle("show");
 }
@@ -236,7 +237,6 @@ function myFunction() {
 // User presses start (2)
 // User can choose between Classic mode or Spaceship mode
 // If Spaceship mode, change css to reflect space design (4)
-// Instructions - put a button and when click, pop out the instructions in another div (3)
 // Highlight winning 4 on board with animation (3)
 // Readme on github (1)
 
@@ -246,7 +246,7 @@ function myFunction() {
 // Watch Part 1 and Part 3 of Hui Yun youtube video
 // When user clicks, ball drops (animation)
 // Ball bounces (animation)
-// Ball lands on last unoccupied space of column (use function(yPos, xPos))
+// Ball lands on last unoccupied space of column (use function(yPos, xPos)) - also what Desmond requested
 // Create moving spaceship on top
 
 // Last Day - if have time
@@ -266,6 +266,7 @@ function myFunction() {
 // display last circle before showing win alert
 // press wrong circle alert ugly - fix for now is to comment out alert, considered done
 // Keep and show total wins by yellow and red (3)
+// Instructions - put a button and when click, pop out the instructions in another div (3)
 
 // For Testing
 // =========================================================================================
