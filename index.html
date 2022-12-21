@@ -10,25 +10,40 @@
 
   <body>
     <header><img class="logo" src="logo.png"></header>
+
+
     <div class = "container">
+
       <div class="board">
         <table id="board"></table>
       </div>
 
       <div class="others">
         <div id="current-turn"></div>
-        
         <div><button class="button" id="rematch">Rematch</button></div>
         <div class="yellow-wins">Yellow Wins: </div>
         <div id="yellow-wins"></div>
         <div class="red-wins">Red Wins: </div>
         <div id="red-wins"></div>
-        <div id="instructions" class="popup" onclick="getInstructions()">Instructions
+        <div id="instructions" class="popup" onclick="displayInstructions()">Instructions
         <span class="popuptext" id="myPopup">Players must connect 4 of the same colored pieces in a row to win. Only one piece is played at a time. The game ends when there is a 4-in-a-row or a stalemate.</span>
-        
         </div>
+
       </div>
     </div>
+  <div class="cover" id="cover">
+    
+      <form id="form">
+        <label id="name-label">Player 1 <br><input id="name1" type="text" placeholder="Enter your name" name="player1" required></label>
+        <label id="name-label">Player 2 <br><input id="name2" type="text" placeholder="Enter your name" name="player2" required></label>
+        <button type="button" id="submit-button" onclick="getNames()">LET'S PLAY!</button>    
+      </form>
+   
+  </div>
+
+
+
+
   </body>
     <script src="script.js" charset="utf-8"></script>
   </body>

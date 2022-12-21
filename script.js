@@ -222,51 +222,21 @@ function startMatch(e) {
 document.querySelector("button").addEventListener("click", startMatch);
 startMatch();
 
-//
-function getInstructions() {
-  var popup = document.getElementById("myPopup");
+// Display popup instructions upon clicking on instructions
+function displayInstructions() {
+  let popup = document.getElementById("myPopup");
   popup.classList.toggle("show");
 }
 
-// To Do
-// =========================================================================================
-// User enters name
-// Stores user's name for further use in game (use local storage) OR
-// don't use a seperate html page, use same page and use a big div to hide the board first
-// then show the FIRST div with the hello and start (3)
-// User presses start (2)
-// User can choose between Classic mode or Spaceship mode
-// If Spaceship mode, change css to reflect space design (4)
-// Highlight winning 4 on board with animation (3)
-// Readme on github (1)
-
-// Bouncing Ball and Spaceship - (5)
-// =========================================================================================
-// Watch flappy bird
-// Watch Part 1 and Part 3 of Hui Yun youtube video
-// When user clicks, ball drops (animation)
-// Ball bounces (animation)
-// Ball lands on last unoccupied space of column (use function(yPos, xPos)) - also what Desmond requested
-// Create moving spaceship on top
-
-// Last Day - if have time
-// =========================================================================================
-// More graphics to make it nice somehow such as:
-// Moving clouds moving stars etc
-// Waving flag
-// Insert border for circles and/or animate when click
-// Local storage
-
-// Done
-// =========================================================================================
-// tie game
-// rearrange functions for readability (order of sequence), so to do that need to change arrow function to declarative function (has hoisting)
-// rematch button
-// player's turn to light up according to color
-// display last circle before showing win alert
-// press wrong circle alert ugly - fix for now is to comment out alert, considered done
-// Keep and show total wins by yellow and red (3)
-// Instructions - put a button and when click, pop out the instructions in another div (3)
+// Get player 1 and 2 names
+function getNames() {
+  let player1 = document.getElementById("name1").value;
+  let player2 = document.getElementById("name2").value;
+  console.log(player1);
+  console.log(player2);
+  let cover = document.getElementById("cover");
+  cover.classList.toggle("hide");
+}
 
 // For Testing
 // =========================================================================================
