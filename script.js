@@ -70,10 +70,11 @@ function displayBoard(board) {
     // Add circles to the row
     for (let col = 0; col < board[row].length; col++) {
       const circle = document.createElement("td");
-      circle.innerText = row + ", " + col;
+      circle.innerText = col + ", " + row;
       circle.setAttribute("yPos", row);
       circle.setAttribute("xPos", col);
       circle.setAttribute("class", "circle");
+      circle.setAttribute("id", col + "," + row);
 
       // add class to change color
       if (board[row][col] !== "") {
@@ -101,9 +102,14 @@ function displayBoard(board) {
   }
 }
 
+let uiBusy = false;
 // Handle click by user.
 // =========================================================================================
 function handleClick(e) {
+  if (uiBusy === true) {
+    return;
+  }
+  uiBusy = true;
   if (results) {
     // if there is a result for the current game, then it's completed so don't let the user click
     return;
@@ -114,6 +120,7 @@ function handleClick(e) {
     checkIfNotOccupied(yPos, xPos) === true &&
     checkIfSpaceBelowIsOccupied(yPos, xPos) === true
   ) {
+    dropPiece(yPos, xPos);
     board[yPos][xPos] = currentPlayer; // assign the space on the board to the player
 
     results = checkWin(currentPlayer); // check the winner and store in the results
@@ -125,7 +132,9 @@ function handleClick(e) {
       currentPlayer = "YELLOW";
     }
 
-    displayBoard(board);
+    setTimeout(function () {
+      displayBoard(board);
+    }, 500);
   } else {
     // return alert("Please select another circle");
   }
@@ -234,6 +243,7 @@ function startMatch(e) {
   player2 = document.getElementById("name2").value;
   let cover = document.getElementById("cover");
   cover.setAttribute("class", "hide");
+
   generateBoard();
   results = "";
   displayBoard(board);
@@ -245,6 +255,37 @@ document.querySelector("button").addEventListener("click", startMatch);
 function displayInstructions() {
   let popup = document.getElementById("myPopup");
   popup.classList.toggle("show");
+}
+
+// Drop piece function
+// =========================================================================================
+function dropPiece(yPos, xPos) {
+  let clickedCircle = document
+    .getElementById(`${xPos},${yPos}`)
+    .getBoundingClientRect(); // this gets the absolute position of the circle, i.e. from top of screen (y) and left of screen (x)
+  let x = clickedCircle["x"];
+  let y = clickedCircle["y"];
+  let dropPiece = document.getElementById("drop-piece");
+
+  dropPiece.style.left = x + "px";
+  dropPiece.style.visibility = "visible";
+  if (currentPlayer === "YELLOW") {
+    dropPiece.style.backgroundColor = "rgb(255, 246, 0)";
+  } else {
+    dropPiece.style.backgroundColor = "rgb(255, 32, 32)";
+  }
+
+  document.getElementById("drop-piece").animate(
+    [
+      { transform: "translateY(0px)" }, // this is -100px from resting place (defined in style.css)
+      { transform: `translateY(${y - 320}px)` }, // this is ending position of the animation
+    ],
+    { duration: 500, iterations: 1 }
+  );
+  setTimeout(function () {
+    dropPiece.style.visibility = "hidden";
+    uiBusy = false;
+  }, 500);
 }
 
 // For Testing
