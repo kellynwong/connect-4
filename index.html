@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Connect 4</title>
     <link rel="stylesheet" href="style.css" />
   </head>
 
@@ -21,9 +21,9 @@
       <div class="others">
         <div id="current-turn"></div>
         <div><button class="button" id="rematch">Rematch</button></div>
-        <div class="yellow-wins">Yellow Wins: </div>
+        <div class="yellow-wins"></div>
         <div id="yellow-wins"></div>
-        <div class="red-wins">Red Wins: </div>
+        <div class="red-wins"></div>
         <div id="red-wins"></div>
         <div id="instructions" class="popup" onclick="displayInstructions()">Instructions
         <span class="popuptext" id="myPopup">Players must connect 4 of the same colored pieces in a row to win. Only one piece is played at a time. The game ends when there is a 4-in-a-row or a stalemate.</span>
@@ -36,7 +36,7 @@
       <form id="form">
         <label id="name-label">Player 1 <br><input id="name1" type="text" placeholder="Enter your name" name="player1" required></label>
         <label id="name-label">Player 2 <br><input id="name2" type="text" placeholder="Enter your name" name="player2" required></label>
-        <button type="button" id="submit-button" onclick="getNames()">LET'S PLAY!</button>    
+        <button type="button" id="submit-button" onclick="startMatch()">LET'S PLAY!</button>    
       </form>
    
   </div>

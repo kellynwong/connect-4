@@ -4,6 +4,8 @@ let board = [];
 let numRows = 6;
 let numCols = 7;
 let currentPlayer = "YELLOW";
+let player1 = "";
+let player2 = "";
 let results = false;
 let yellowWins = 0;
 let redWins = 0;
@@ -36,9 +38,18 @@ function displayBoard(board) {
   // reset board each time function is called, so as to display latest state of array
   document.querySelector("#board").innerHTML = "";
 
+  let currentPlayerName = "";
+  if (currentPlayer === "YELLOW") {
+    currentPlayerName = player1;
+  } else {
+    currentPlayerName = player2;
+  }
+
+  document.querySelector(".yellow-wins").innerText = `${player1} Total Wins:`;
+  document.querySelector(".red-wins").innerText = `${player2} Total Wins:`;
+
   // player is set as global variable, hence can access here
-  statusElement.innerText = `${currentPlayer}'S 
-  TURN`;
+  statusElement.innerText = `${currentPlayerName}'S TURN`;
   statusElement.setAttribute("class", currentPlayer);
 
   // display scores on board
@@ -72,49 +83,54 @@ function displayBoard(board) {
       // add this circle to the row
       newRow.append(circle);
       circle.addEventListener("click", handleClick);
-
-      // display final results of game
-      if (results === "TIE") {
-        statusElement.innerText = `It's a TIE!`;
-        statusElement.setAttribute("class", "GREY");
-      } else if (results === "YELLOW" || results === "RED") {
-        statusElement.innerText = `${results} 
-        WINS!`;
-        statusElement.setAttribute("class", results); // change color
-      }
     }
   }
 
-  // Handle click by user.
-  // =========================================================================================
-  function handleClick(e) {
-    if (results) {
-      // if there is a result for the current game, then it's completed so don't let the user click
-      return;
-    }
-    let yPos = Number(e.target.getAttribute("yPos"));
-    let xPos = Number(e.target.getAttribute("xPos"));
-    if (
-      checkIfNotOccupied(yPos, xPos) === true &&
-      checkIfSpaceBelowIsOccupied(yPos, xPos) === true
-    ) {
-      board[yPos][xPos] = currentPlayer; // assign the space on the board to the player
-
-      results = checkWin(currentPlayer); // check the winner and store in the results
-
-      // move the turn to the next player
-      if (currentPlayer === "YELLOW") {
-        currentPlayer = "RED";
-      } else {
-        currentPlayer = "YELLOW";
-      }
-
-      displayBoard(board);
+  // display final results of game
+  if (results === "TIE") {
+    statusElement.innerText = `It's a TIE!`;
+    statusElement.setAttribute("class", "GREY");
+  } else if (results === "YELLOW" || results === "RED") {
+    if (results === "YELLOW") {
+      currentPlayerName = player1;
     } else {
-      // return alert("Please select another circle");
+      currentPlayerName = player2;
     }
+    statusElement.innerText = `${currentPlayerName} WINS!`;
+    statusElement.setAttribute("class", results); // change color
   }
 }
+
+// Handle click by user.
+// =========================================================================================
+function handleClick(e) {
+  if (results) {
+    // if there is a result for the current game, then it's completed so don't let the user click
+    return;
+  }
+  let yPos = Number(e.target.getAttribute("yPos"));
+  let xPos = Number(e.target.getAttribute("xPos"));
+  if (
+    checkIfNotOccupied(yPos, xPos) === true &&
+    checkIfSpaceBelowIsOccupied(yPos, xPos) === true
+  ) {
+    board[yPos][xPos] = currentPlayer; // assign the space on the board to the player
+
+    results = checkWin(currentPlayer); // check the winner and store in the results
+
+    // move the turn to the next player
+    if (currentPlayer === "YELLOW") {
+      currentPlayer = "RED";
+    } else {
+      currentPlayer = "YELLOW";
+    }
+
+    displayBoard(board);
+  } else {
+    // return alert("Please select another circle");
+  }
+}
+
 // Check if space is occupied, if occupied, cannot place move.
 // =========================================================================================
 function checkIfNotOccupied(yPos, xPos) {
@@ -214,28 +230,21 @@ function getTokenInSpace(yPos, xPos) {
 // Starts a match, or generate new board when user clicks rematch
 // =========================================================================================
 function startMatch(e) {
+  player1 = document.getElementById("name1").value;
+  player2 = document.getElementById("name2").value;
+  let cover = document.getElementById("cover");
+  cover.setAttribute("class", "hide");
   generateBoard();
   results = "";
   displayBoard(board);
 }
-
 document.querySelector("button").addEventListener("click", startMatch);
-startMatch();
 
 // Display popup instructions upon clicking on instructions
+// =========================================================================================
 function displayInstructions() {
   let popup = document.getElementById("myPopup");
   popup.classList.toggle("show");
-}
-
-// Get player 1 and 2 names
-function getNames() {
-  let player1 = document.getElementById("name1").value;
-  let player2 = document.getElementById("name2").value;
-  console.log(player1);
-  console.log(player2);
-  let cover = document.getElementById("cover");
-  cover.classList.toggle("hide");
 }
 
 // For Testing
