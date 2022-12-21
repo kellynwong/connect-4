@@ -70,11 +70,11 @@ function displayBoard(board) {
     // Add circles to the row
     for (let col = 0; col < board[row].length; col++) {
       const circle = document.createElement("td");
-      circle.innerText = col + ", " + row;
+      circle.innerText = row + ", " + col;
       circle.setAttribute("yPos", row);
       circle.setAttribute("xPos", col);
       circle.setAttribute("class", "circle");
-      circle.setAttribute("id", col + "," + row);
+      circle.setAttribute("id", row + "," + col);
 
       // add class to change color
       if (board[row][col] !== "") {
@@ -114,30 +114,39 @@ function handleClick(e) {
     // if there is a result for the current game, then it's completed so don't let the user click
     return;
   }
+
   let yPos = Number(e.target.getAttribute("yPos"));
   let xPos = Number(e.target.getAttribute("xPos"));
-  if (
-    checkIfNotOccupied(yPos, xPos) === true &&
-    checkIfSpaceBelowIsOccupied(yPos, xPos) === true
-  ) {
-    dropPiece(yPos, xPos);
-    board[yPos][xPos] = currentPlayer; // assign the space on the board to the player
 
-    results = checkWin(currentPlayer); // check the winner and store in the results
-
-    // move the turn to the next player
-    if (currentPlayer === "YELLOW") {
-      currentPlayer = "RED";
-    } else {
-      currentPlayer = "YELLOW";
-    }
-
-    setTimeout(function () {
-      displayBoard(board);
-    }, 500);
-  } else {
-    // return alert("Please select another circle");
+  // if (
+  //   checkIfNotOccupied(yPos, xPos) === true &&
+  //   checkIfSpaceBelowIsOccupied(yPos, xPos) === true
+  // ) {
+  const { yFinal, xFinal } = getRestingPlace(yPos, xPos);
+  if (yFinal < 0) {
+    uiBusy = false;
+    return;
   }
+  dropPiece(yFinal, xFinal);
+
+  board[yFinal][xFinal] = currentPlayer; // assign the space on the board to the player
+
+  results = checkWin(currentPlayer); // check the winner and store in the results
+
+  // move the turn to the next player
+  if (currentPlayer === "YELLOW") {
+    currentPlayer = "RED";
+  } else {
+    currentPlayer = "YELLOW";
+  }
+
+  setTimeout(function () {
+    displayBoard(board);
+    uiBusy = false;
+  }, 500);
+
+  uiBusy = false;
+  // return alert("Please select another circle");
 }
 
 // Check if space is occupied, if occupied, cannot place move.
@@ -158,6 +167,21 @@ function checkIfSpaceBelowIsOccupied(yPos, xPos) {
 
   // if space below is not nothing then return true
   return board[yPos + 1][xPos] !== "";
+}
+
+// Check for final resting place
+// =========================================================================================
+function getRestingPlace(yPos, xPos) {
+  let array = [];
+  for (let i = 5; i >= 0; i--) {
+    if (board[i][xPos] !== "") {
+      array.push(board[i][xPos]);
+    }
+  }
+  yFinal = 5 - array.length;
+  xFinal = xPos;
+
+  return { yFinal, xFinal };
 }
 
 // Check for four straights for every position
@@ -257,14 +281,15 @@ function displayInstructions() {
   popup.classList.toggle("show");
 }
 
-// Drop piece function
+// Display drop piece function
 // =========================================================================================
 function dropPiece(yPos, xPos) {
+  // xPos: column; yPos: row
   let clickedCircle = document
-    .getElementById(`${xPos},${yPos}`)
+    .getElementById(`${yPos},${xPos}`)
     .getBoundingClientRect(); // this gets the absolute position of the circle, i.e. from top of screen (y) and left of screen (x)
-  let x = clickedCircle["x"];
-  let y = clickedCircle["y"];
+  let x = clickedCircle["x"]; // from left of screen
+  let y = clickedCircle["y"]; // from top of screen
   let dropPiece = document.getElementById("drop-piece");
 
   dropPiece.style.left = x + "px";
@@ -284,7 +309,6 @@ function dropPiece(yPos, xPos) {
   );
   setTimeout(function () {
     dropPiece.style.visibility = "hidden";
-    uiBusy = false;
   }, 500);
 }
 
