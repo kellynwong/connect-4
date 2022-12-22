@@ -186,7 +186,7 @@ img {
 
 form {
   text-align: center;
-  margin-top: 500px;
+  margin-top: 10px;
 }
 
 label {
@@ -244,6 +244,7 @@ input::placeholder {
 .winning-row {
   border: 5px inset orange;
   box-sizing: border-box;
+  animation: blink 0.5s infinite;
 }
 
 .winning-box {

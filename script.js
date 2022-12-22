@@ -1,4 +1,4 @@
-// Declare global variables.
+// Declare global variables
 // =========================================================================================
 let board = [];
 let numRows = 6;
@@ -14,7 +14,7 @@ let gameMode = "";
 let startX = 0;
 let endX = 0;
 
-// Load sounds
+// Store and load sounds
 // =========================================================================================
 var win = new Audio();
 win.src = "Sounds/winsquare-6993.mp3";
@@ -28,14 +28,14 @@ laser.src = "Sounds/beam-8-43831.mp3";
 var start = new Audio();
 start.src = "Sounds/game-start-6104.mp3";
 
-// Display popup instructions upon clicking on instructions
+// Display popup instructions upon clicking on "Instructions" button
 // =========================================================================================
 function displayInstructions() {
   let popup = document.getElementById("myPopup");
   popup.classList.toggle("show");
 }
 
-// Create array of arrays, storing "" as value.
+// Create array of arrays, storing "" as value
 // =========================================================================================
 // Example: const board = [
 //   ["", "", "", "", "", "", ""],
@@ -56,28 +56,28 @@ function generateBoard() {
   }
 }
 
-// Display board using values stored in array.
+// Display board using values stored in array
 // =========================================================================================
 function displayBoard(board) {
   const statusElement = document.querySelector("#current-turn");
+
   // reset board each time function is called, so as to display latest state of array
   document.querySelector("#board").innerHTML = "";
 
+  // display player's name with total accumulated wins on right side of screen
   let currentPlayerName = "";
   if (currentPlayer === "YELLOW") {
     currentPlayerName = player1;
   } else {
     currentPlayerName = player2;
   }
-
   document.querySelector(".yellow-wins").innerText = `${player1} Total Wins:`;
   document.querySelector(".red-wins").innerText = `${player2} Total Wins:`;
 
-  // player is set as global variable, hence can access here
+  // display whose turn is it currently on right side of screem
   statusElement.innerText = `${currentPlayerName}'S TURN`;
   statusElement.setAttribute("class", currentPlayer);
 
-  // display scores on board
   if (results === "YELLOW") {
     yellowWins += 1;
   } else if (results === "RED") {
@@ -86,13 +86,14 @@ function displayBoard(board) {
   document.querySelector("#yellow-wins").innerText = yellowWins;
   document.querySelector("#red-wins").innerText = redWins;
 
+  // create circles
   for (let row = 0; row < board.length; row++) {
-    // Make a new row
+    // make a new row
     const newRow = document.createElement("tr");
     newRow.setAttribute("class", "row");
     document.querySelector("#board").append(newRow);
 
-    // Add circles to the row
+    // add circles to the row and manipulate DOM
     for (let col = 0; col < board[row].length; col++) {
       const circle = document.createElement("td");
       circle.innerText = row + ", " + col;
@@ -101,7 +102,7 @@ function displayBoard(board) {
       circle.setAttribute("class", "circle");
       circle.setAttribute("id", row + "," + col);
 
-      // add class to change color
+      // add class to change color if circle is filled
       if (board[row][col] !== "") {
         circle.classList.add(board[row][col]);
       }
@@ -112,7 +113,7 @@ function displayBoard(board) {
     }
   }
 
-  // display final results of game
+  // display final results of current game on right side of screen
   if (results === "TIE") {
     statusElement.innerText = `It's a TIE!`;
     statusElement.setAttribute("class", "GREY");
@@ -123,7 +124,6 @@ function displayBoard(board) {
         .getElementById(`${winningCircle[0]},${winningCircle[1]}`)
         .classList.add("winning-row");
     }
-
     if (results === "YELLOW") {
       currentPlayerName = player1;
     } else {
@@ -133,9 +133,9 @@ function displayBoard(board) {
     statusElement.setAttribute("class", results);
     statusElement.classList.add("winning-box");
     win.play();
-    // change color
   }
 
+  // [SPECIAL] animate the left-right movement of spaceship upon generation of board
   let startOfSpaceship = document.getElementById("0,0").getBoundingClientRect();
   startX = startOfSpaceship["x"];
   let endOfSpaceship = document.getElementById("0,6").getBoundingClientRect();
@@ -145,43 +145,48 @@ function displayBoard(board) {
       { transform: `translateX(${startX - 30}px)` }, // this is x px from resting place (defined in style.css - 0 currently)
       { transform: `translateX(${endX + 30}px)` }, // this is ending position of the animation
     ],
-    { duration: 2000, iterations: 1000, direction: "alternate" }
+    { duration: 1000, iterations: 1000, direction: "alternate" }
   );
 }
 
 let uiBusy = false;
-// Handle click by user.
+// Handle clicks by user anywhere in the grid
 // =========================================================================================
 function handleClick(e) {
+  // [SPECIAL] do not run further (this function) if game mode is special
   if (gameMode === "special") {
     return;
   }
-  if (uiBusy === true) {
-    return;
-  }
-  uiBusy = true;
+
+  // do not run further (this function) if there is a result, i.e. someone won
   if (results) {
-    // if there is a result for the current game, then it's completed so don't let the user click
     return;
   }
 
+  // save the coordinates of where user clicked into variables
   let yPos = Number(e.target.getAttribute("yPos"));
   let xPos = Number(e.target.getAttribute("xPos"));
 
-  // if (
-  //   checkIfNotOccupied(yPos, xPos) === true &&
-  //   checkIfSpaceBelowIsOccupied(yPos, xPos) === true
-  // ) {
+  // feed variables as arguments into getRestingPlace function
   const { yFinal, xFinal } = getRestingPlace(yPos, xPos);
   if (yFinal < 0) {
-    uiBusy = false;
+    // to prevent negative yFinal to be passed into dropPiece function
     return;
   }
+
+  // to prevent user from clicking further when dropPiece animation is still running, see line 201 below where we switch it back to false
+  if (uiBusy === true) {
+    return;
+  }
+  uiBusy = true; // if user clicks again, handleClick function is called again, and because uiBusy is set to true, line 178 above will prevent it from running
+
   dropPiece(yFinal, xFinal);
 
-  board[yFinal][xFinal] = currentPlayer; // assign the space on the board to the player
+  // assign the circle on the board to the player
+  board[yFinal][xFinal] = currentPlayer;
 
-  results = checkWin(currentPlayer); // check the winner and store in the results
+  // check if there's a winner and store in the results variable
+  results = checkWin(currentPlayer);
   drop.play();
 
   // move the turn to the next player
@@ -191,11 +196,11 @@ function handleClick(e) {
     currentPlayer = "YELLOW";
   }
 
+  // set time out so that board is generated only after animation from dropPiece is completed
   setTimeout(function () {
     uiBusy = false;
     displayBoard(board);
   }, 400);
-  // return alert("Please select another circle");
 }
 
 // Check for final resting place
@@ -207,10 +212,40 @@ function getRestingPlace(yPos, xPos) {
       array.push(board[i][xPos]);
     }
   }
-  yFinal = 5 - array.length;
+  yFinal = 5 - array.length; // if array is filled i.e 6 circles, array.length will be 6, so yFinal will be negative
   xFinal = xPos;
-
   return { yFinal, xFinal };
+}
+
+// Drop piece at wherever user clicks
+// =========================================================================================
+function dropPiece(yPos, xPos) {
+  // xPos: column; yPos: row
+  let finalCircle = document
+    .getElementById(`${yPos},${xPos}`)
+    .getBoundingClientRect(); // this gets the absolute position of the final circle, i.e. from top of screen (y) and left of screen (x)
+  let x = finalCircle["x"]; // from left of screen
+  let y = finalCircle["y"]; // from top of screen
+  let dropPiece = document.getElementById("drop-piece");
+
+  dropPiece.style.left = x + "px";
+  dropPiece.style.visibility = "visible";
+  if (currentPlayer === "YELLOW") {
+    dropPiece.style.backgroundColor = "rgb(255, 246, 0)";
+  } else {
+    dropPiece.style.backgroundColor = "rgb(255, 32, 32)";
+  }
+
+  document.getElementById("drop-piece").animate(
+    [
+      { transform: "translateY(0px)", opacity: 0.4 }, // this is 0px from resting place (320 mark from top of page set in CSS)
+      { transform: `translateY(${y - 320}px)`, opacity: 1 }, // this is ending position of the animation
+    ],
+    { duration: 400, iterations: 1 }
+  );
+  setTimeout(function () {
+    dropPiece.style.visibility = "hidden";
+  }, 400);
 }
 
 // Check for four straights for every position
@@ -289,10 +324,11 @@ function checkWin(player) {
 // Check if player has a token in that position, i.e. if color of position === color of player
 // =========================================================================================
 function checkSpaceHasPlayerColor(yPos, xPos, player) {
+  // get value
   return getTokenInSpace(yPos, xPos) === player;
 }
 
-// Return color of position (i.e. value of "YELLOW" or "RED") based on coordinates (yPos, xPos) passed in.
+// Return color of position (i.e. value of "YELLOW" or "RED") based on coordinates (yPos, xPos) passed in
 // =========================================================================================
 function getTokenInSpace(yPos, xPos) {
   if (
@@ -301,43 +337,12 @@ function getTokenInSpace(yPos, xPos) {
     xPos >= 0 &&
     xPos < board[yPos].length
   ) {
-    return board[yPos][xPos];
+    return board[yPos][xPos]; // access array to get value
   }
   return "";
 }
 
-// Drop piece at wherever user clicks
-// =========================================================================================
-function dropPiece(yPos, xPos) {
-  // xPos: column; yPos: row
-  let clickedCircle = document
-    .getElementById(`${yPos},${xPos}`)
-    .getBoundingClientRect(); // this gets the absolute position of the circle, i.e. from top of screen (y) and left of screen (x)
-  let x = clickedCircle["x"]; // from left of screen
-  let y = clickedCircle["y"]; // from top of screen
-  let dropPiece = document.getElementById("drop-piece");
-
-  dropPiece.style.left = x + "px";
-  dropPiece.style.visibility = "visible";
-  if (currentPlayer === "YELLOW") {
-    dropPiece.style.backgroundColor = "rgb(255, 246, 0)";
-  } else {
-    dropPiece.style.backgroundColor = "rgb(255, 32, 32)";
-  }
-
-  document.getElementById("drop-piece").animate(
-    [
-      { transform: "translateY(0px)", opacity: 0.4 }, // this is 0px from resting place (defined in style.css)
-      { transform: `translateY(${y - 320}px)`, opacity: 1 }, // this is ending position of the animation // 320 is from top of page
-    ],
-    { duration: 400, iterations: 1 }
-  );
-  setTimeout(function () {
-    dropPiece.style.visibility = "hidden";
-  }, 400);
-}
-
-// Starts a match, or generate new board when user clicks "Rematch" button"
+// Starts a match, or generate new board when user clicks "Rematch" button
 // =========================================================================================
 function startMatch(e) {
   start.play();
@@ -355,7 +360,7 @@ function startMatch(e) {
 }
 document.querySelector("button").addEventListener("click", startMatch);
 
-// SPECIAL MODE: What happens when user clicks PLAY SPECIAL in intro page
+// [SPECIAL] Starts a match in special mode
 // =========================================================================================
 function startSpecialMatch() {
   gameMode = "special";
@@ -366,7 +371,7 @@ function startSpecialMatch() {
   document.addEventListener("keydown", dropPieceFromSpaceship); //accepts pressing after board is up
 }
 
-// SPECIAL MODE: Drop piece at whenever there is a keydown event
+// [SPECIAL] Drop piece at whenever there is a keydown event
 // =========================================================================================
 function dropPieceFromSpaceship(e) {
   e.preventDefault();
@@ -381,13 +386,6 @@ function dropPieceFromSpaceship(e) {
   let eachColLength = (endX - startX) / 7;
   let row = 0;
   let col = 0;
-  // 0,0: startX AND startX + eachColLength
-  // 0,1: startX + eachColLength AND startX + 2* eachColLength
-  // 0,2: startX + 2* eachColLength AND startX + 3* eachColLength
-  // 0,3: startX + 3* eachColLength AND startX + 4* eachColLength
-  // 0,4: startX + 4* eachColLength AND startX + 5* eachColLength
-  // 0,5: startX + 5* eachColLength AND startX + 6* eachColLength
-  // 0,6: startX + 6* eachColLength AND endX
 
   // 0,0
   if (spaceshipPosition["x"] < startX + eachColLength) {
@@ -460,13 +458,3 @@ function dropPieceFromSpaceship(e) {
     displayBoard(board);
   }, 400);
 }
-
-// For Testing
-// =========================================================================================
-/*
-console.log("Testing for tie");
-board = JSON.parse(
-  '[["RED","YELLOW","RED","YELLOW","RED","YELLOW","RED"],["RED","RED","YELLOW","RED","YELLOW","YELLOW","RED"],["YELLOW","RED","YELLOW","RED","YELLOW","RED","YELLOW"],["YELLOW","RED","YELLOW","RED","YELLOW","RED","YELLOW"],["RED","YELLOW","RED","YELLOW","RED","YELLOW","RED"],["YELLOW","RED","YELLOW","RED","YELLOW","RED","YELLOW"]]'
-);
-console.log(checkWin());
-*/
