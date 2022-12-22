@@ -9,6 +9,25 @@ let player2 = "";
 let results = false;
 let yellowWins = 0;
 let redWins = 0;
+let winningArray = [];
+let gameMode = "";
+let startX = 0;
+let endX = 0;
+
+// Load sounds
+
+var win = new Audio();
+win.src = "winsquare-6993.mp3";
+
+var drop = new Audio();
+drop.src = "stone-dropping-6843.mp3";
+
+// Display popup instructions upon clicking on instructions
+// =========================================================================================
+function displayInstructions() {
+  let popup = document.getElementById("myPopup");
+  popup.classList.toggle("show");
+}
 
 // Create array of arrays, storing "" as value.
 // =========================================================================================
@@ -92,20 +111,45 @@ function displayBoard(board) {
     statusElement.innerText = `It's a TIE!`;
     statusElement.setAttribute("class", "GREY");
   } else if (results === "YELLOW" || results === "RED") {
+    for (let b = 0; b < winningArray.length; b++) {
+      const winningCircle = winningArray[b];
+      document
+        .getElementById(`${winningCircle[0]},${winningCircle[1]}`)
+        .classList.add("winning-row");
+    }
+
     if (results === "YELLOW") {
       currentPlayerName = player1;
     } else {
       currentPlayerName = player2;
     }
     statusElement.innerText = `${currentPlayerName} WINS!`;
-    statusElement.setAttribute("class", results); // change color
+    statusElement.setAttribute("class", results);
+    statusElement.classList.add("winning-box");
+    win.play();
+    // change color
   }
+
+  let startOfSpaceship = document.getElementById("0,0").getBoundingClientRect();
+  startX = startOfSpaceship["x"];
+  let endOfSpaceship = document.getElementById("0,6").getBoundingClientRect();
+  endX = endOfSpaceship["x"];
+  document.getElementById("spaceship").animate(
+    [
+      { transform: `translateX(${startX - 30}px)` }, // this is x px from resting place (defined in style.css - 0 currently)
+      { transform: `translateX(${endX + 30}px)` }, // this is ending position of the animation
+    ],
+    { duration: 2000, iterations: 1000, direction: "alternate" }
+  );
 }
 
 let uiBusy = false;
 // Handle click by user.
 // =========================================================================================
 function handleClick(e) {
+  if (gameMode === "special") {
+    return;
+  }
   if (uiBusy === true) {
     return;
   }
@@ -132,6 +176,7 @@ function handleClick(e) {
   board[yFinal][xFinal] = currentPlayer; // assign the space on the board to the player
 
   results = checkWin(currentPlayer); // check the winner and store in the results
+  drop.play();
 
   // move the turn to the next player
   if (currentPlayer === "YELLOW") {
@@ -141,12 +186,25 @@ function handleClick(e) {
   }
 
   setTimeout(function () {
-    displayBoard(board);
     uiBusy = false;
-  }, 500);
-
-  uiBusy = false;
+    displayBoard(board);
+  }, 400);
   // return alert("Please select another circle");
+}
+
+// Check for final resting place
+// =========================================================================================
+function getRestingPlace(yPos, xPos) {
+  let array = [];
+  for (let i = 5; i >= 0; i--) {
+    if (board[i][xPos] !== "") {
+      array.push(board[i][xPos]);
+    }
+  }
+  yFinal = 5 - array.length;
+  xFinal = xPos;
+
+  return { yFinal, xFinal };
 }
 
 // Check if space is occupied, if occupied, cannot place move.
@@ -167,21 +225,6 @@ function checkIfSpaceBelowIsOccupied(yPos, xPos) {
 
   // if space below is not nothing then return true
   return board[yPos + 1][xPos] !== "";
-}
-
-// Check for final resting place
-// =========================================================================================
-function getRestingPlace(yPos, xPos) {
-  let array = [];
-  for (let i = 5; i >= 0; i--) {
-    if (board[i][xPos] !== "") {
-      array.push(board[i][xPos]);
-    }
-  }
-  yFinal = 5 - array.length;
-  xFinal = xPos;
-
-  return { yFinal, xFinal };
 }
 
 // Check for four straights for every position
@@ -205,6 +248,11 @@ function checkWin(player) {
         checkSpaceHasPlayerColor(row, col + 2, player) && // is this also YELLOW?
         checkSpaceHasPlayerColor(row, col + 3, player) // is this also YELLOW?
       ) {
+        winningArray.push([row, col]);
+        winningArray.push([row, col + 1]);
+        winningArray.push([row, col + 2]);
+        winningArray.push([row, col + 3]);
+
         return player;
       }
 
@@ -215,6 +263,10 @@ function checkWin(player) {
         checkSpaceHasPlayerColor(row + 2, col, player) &&
         checkSpaceHasPlayerColor(row + 3, col, player)
       ) {
+        winningArray.push([row, col]);
+        winningArray.push([row + 1, col]);
+        winningArray.push([row + 2, col]);
+        winningArray.push([row + 3, col]);
         return player;
       }
       // check 4 diagnonally left up to the same color
@@ -224,6 +276,10 @@ function checkWin(player) {
         checkSpaceHasPlayerColor(row - 2, col - 2, player) &&
         checkSpaceHasPlayerColor(row - 3, col - 3, player)
       ) {
+        winningArray.push([row, col]);
+        winningArray.push([row - 1, col - 1]);
+        winningArray.push([row - 2, col - 2]);
+        winningArray.push([row - 3, col - 3]);
         return player;
       }
       // check 4 diagnonally right up to the same color
@@ -233,6 +289,10 @@ function checkWin(player) {
         checkSpaceHasPlayerColor(row - 2, col + 2, player) &&
         checkSpaceHasPlayerColor(row - 3, col + 3, player)
       ) {
+        winningArray.push([row, col]);
+        winningArray.push([row - 1, col + 1]);
+        winningArray.push([row - 2, col + 2]);
+        winningArray.push([row - 3, col + 3]);
         return player;
       }
     }
@@ -260,30 +320,7 @@ function getTokenInSpace(yPos, xPos) {
   return "";
 }
 
-// Starts a match, or generate new board when user clicks rematch
-// =========================================================================================
-function startMatch(e) {
-  player1 = document.getElementById("name1").value;
-  player1 = player1.toUpperCase();
-  player2 = document.getElementById("name2").value;
-  player2 = player2.toUpperCase();
-  let cover = document.getElementById("cover");
-  cover.setAttribute("class", "hide");
-
-  generateBoard();
-  results = "";
-  displayBoard(board);
-}
-document.querySelector("button").addEventListener("click", startMatch);
-
-// Display popup instructions upon clicking on instructions
-// =========================================================================================
-function displayInstructions() {
-  let popup = document.getElementById("myPopup");
-  popup.classList.toggle("show");
-}
-
-// Display drop piece function
+// Drop piece at wherever user clicks
 // =========================================================================================
 function dropPiece(yPos, xPos) {
   // xPos: column; yPos: row
@@ -304,14 +341,136 @@ function dropPiece(yPos, xPos) {
 
   document.getElementById("drop-piece").animate(
     [
-      { transform: "translateY(0px)" }, // this is -100px from resting place (defined in style.css)
-      { transform: `translateY(${y - 320}px)` }, // this is ending position of the animation
+      { transform: "translateY(0px)", opacity: 0.4 }, // this is 0px from resting place (defined in style.css)
+      { transform: `translateY(${y - 320}px)`, opacity: 1 }, // this is ending position of the animation // 320 is from top of page
     ],
-    { duration: 500, iterations: 1 }
+    { duration: 400, iterations: 1 }
   );
   setTimeout(function () {
     dropPiece.style.visibility = "hidden";
-  }, 500);
+  }, 400);
+}
+
+// Starts a match, or generate new board when user clicks rematch
+// =========================================================================================
+function startMatch(e) {
+  player1 = document.getElementById("name1").value;
+  player1 = player1.toUpperCase();
+  player2 = document.getElementById("name2").value;
+  player2 = player2.toUpperCase();
+  let cover = document.getElementById("cover");
+  cover.setAttribute("class", "hide");
+
+  generateBoard();
+  results = "";
+  winningArray = [];
+  displayBoard(board);
+}
+document.querySelector("button").addEventListener("click", startMatch);
+
+// SPECIAL MODE: What happens when user clicks PLAY SPECIAL in intro page
+// =========================================================================================
+function startSpecialMatch() {
+  gameMode = "special";
+  spaceship.style.visibility = "visible";
+  document.body.style.backgroundImage = "url('Images/night1.jpeg')";
+
+  startMatch();
+  document.addEventListener("keydown", dropPieceFromSpaceship); //accepts pressing after board is up
+}
+
+// SPECIAL MODE: Drop piece at whenever there is a keydown event
+// =========================================================================================
+function dropPieceFromSpaceship(e) {
+  e.preventDefault();
+  if (results) {
+    // if there is a result for the current game, then it's completed so don't let the user click
+    return;
+  }
+
+  let spaceshipPosition = document
+    .getElementById("spaceship")
+    .getBoundingClientRect();
+  let eachColLength = (endX - startX) / 7;
+  let row = 0;
+  let col = 0;
+  // 0,0: startX AND startX + eachColLength
+  // 0,1: startX + eachColLength AND startX + 2* eachColLength
+  // 0,2: startX + 2* eachColLength AND startX + 3* eachColLength
+  // 0,3: startX + 3* eachColLength AND startX + 4* eachColLength
+  // 0,4: startX + 4* eachColLength AND startX + 5* eachColLength
+  // 0,5: startX + 5* eachColLength AND startX + 6* eachColLength
+  // 0,6: startX + 6* eachColLength AND endX
+
+  // 0,0
+  if (spaceshipPosition["x"] < startX + eachColLength) {
+    row = 0;
+    col = 0;
+  }
+  if (
+    spaceshipPosition["x"] < startX + 2 * eachColLength &&
+    spaceshipPosition["x"] > startX + eachColLength
+  ) {
+    row = 0;
+    col = 1;
+  }
+  if (
+    spaceshipPosition["x"] < startX + 3 * eachColLength &&
+    spaceshipPosition["x"] > startX + 2 * eachColLength
+  ) {
+    row = 0;
+    col = 2;
+  }
+  if (
+    spaceshipPosition["x"] < startX + 4 * eachColLength &&
+    spaceshipPosition["x"] > startX + 3 * eachColLength
+  ) {
+    row = 0;
+    col = 3;
+  }
+
+  if (
+    spaceshipPosition["x"] < startX + 5 * eachColLength &&
+    spaceshipPosition["x"] > startX + 4 * eachColLength
+  ) {
+    row = 0;
+    col = 4;
+  }
+
+  if (
+    spaceshipPosition["x"] < startX + 6 * eachColLength &&
+    spaceshipPosition["x"] > startX + 5 * eachColLength
+  ) {
+    row = 0;
+    col = 5;
+  }
+
+  if (spaceshipPosition["x"] > startX + 6 * eachColLength) {
+    row = 0;
+    col = 6;
+  }
+
+  const { yFinal, xFinal } = getRestingPlace(row, col);
+  if (yFinal < 0) {
+    uiBusy = false;
+    return;
+  }
+  dropPiece(yFinal, xFinal);
+  board[yFinal][xFinal] = currentPlayer; // assign the space on the board to the player
+
+  results = checkWin(currentPlayer); // check the winner and store in the results
+
+  // move the turn to the next player
+  if (currentPlayer === "YELLOW") {
+    currentPlayer = "RED";
+  } else {
+    currentPlayer = "YELLOW";
+  }
+
+  setTimeout(function () {
+    uiBusy = false;
+    displayBoard(board);
+  }, 400);
 }
 
 // For Testing

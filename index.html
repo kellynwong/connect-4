@@ -9,9 +9,9 @@
   </head>
 
   <body>
-    <header><img class="logo" src="logo.png"></header>
+    <header><img id="logo" class="logo" src="Images/logo.png"></header>
  
- 
+ <div class="spaceship" id="spaceship"><img src="Images/spaceship - Edited.png"/></div>
     <div class="drop-piece" id="drop-piece"></div>
 
     <div class = "container">
@@ -37,9 +37,10 @@
   <div class="cover" id="cover">
     
       <form id="form">
-        <label id="name-label">Player 1 <br><input id="name1" type="text" placeholder="Enter your name" name="player1" required></label>
-        <label id="name-label">Player 2 <br><input id="name2" type="text" placeholder="Enter your name" name="player2" required></label>
-        <button type="button" id="submit-button" onclick="startMatch()">LET'S PLAY!</button>    
+        <label id="name-label">Player 1 <br><input id="name1" type="text" autocomplete = "off" placeholder="Enter your name" name="player1" required></label>
+        <label id="name-label">Player 2 <br><input id="name2" type="text" autocomplete="off" placeholder="Enter your name" name="player2" required></label>
+        <button type="button" id="submit-button" onclick="startMatch()">PLAY CLASSIC</button>    
+        <button type="button" id="submit-button" onclick="startSpecialMatch()">PLAY SPECIAL</button> 
       </form>
    
   </div>
