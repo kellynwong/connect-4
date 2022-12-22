@@ -15,12 +15,18 @@ let startX = 0;
 let endX = 0;
 
 // Load sounds
-
+// =========================================================================================
 var win = new Audio();
-win.src = "winsquare-6993.mp3";
+win.src = "Sounds/winsquare-6993.mp3";
 
 var drop = new Audio();
-drop.src = "stone-dropping-6843.mp3";
+drop.src = "Sounds/stone-dropping-6843.mp3";
+
+var laser = new Audio();
+laser.src = "Sounds/beam-8-43831.mp3";
+
+var start = new Audio();
+start.src = "Sounds/game-start-6104.mp3";
 
 // Display popup instructions upon clicking on instructions
 // =========================================================================================
@@ -207,26 +213,6 @@ function getRestingPlace(yPos, xPos) {
   return { yFinal, xFinal };
 }
 
-// Check if space is occupied, if occupied, cannot place move.
-// =========================================================================================
-function checkIfNotOccupied(yPos, xPos) {
-  // if the board space is empty then the player can place a piece there
-  return board[yPos][xPos] === "";
-}
-
-// This check is not applicable for first row. Check if space below is occupied, if occupied, can place move.
-// =========================================================================================
-function checkIfSpaceBelowIsOccupied(yPos, xPos) {
-  // if space below has a piece, player can place a piece on space
-  // no need to check first row of board because anywhere can put (space below is ground)
-  if (yPos === numRows - 1) {
-    return true;
-  }
-
-  // if space below is not nothing then return true
-  return board[yPos + 1][xPos] !== "";
-}
-
 // Check for four straights for every position
 // =========================================================================================
 function checkWin(player) {
@@ -351,9 +337,10 @@ function dropPiece(yPos, xPos) {
   }, 400);
 }
 
-// Starts a match, or generate new board when user clicks rematch
+// Starts a match, or generate new board when user clicks "Rematch" button"
 // =========================================================================================
 function startMatch(e) {
+  start.play();
   player1 = document.getElementById("name1").value;
   player1 = player1.toUpperCase();
   player2 = document.getElementById("name2").value;
@@ -459,6 +446,7 @@ function dropPieceFromSpaceship(e) {
   board[yFinal][xFinal] = currentPlayer; // assign the space on the board to the player
 
   results = checkWin(currentPlayer); // check the winner and store in the results
+  laser.play();
 
   // move the turn to the next player
   if (currentPlayer === "YELLOW") {
