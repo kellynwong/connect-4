@@ -264,7 +264,9 @@ function getTokenInSpace(yPos, xPos) {
 // =========================================================================================
 function startMatch(e) {
   player1 = document.getElementById("name1").value;
+  player1 = player1.toUpperCase();
   player2 = document.getElementById("name2").value;
+  player2 = player2.toUpperCase();
   let cover = document.getElementById("cover");
   cover.setAttribute("class", "hide");
 
